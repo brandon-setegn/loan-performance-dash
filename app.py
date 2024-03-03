@@ -5,14 +5,18 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 import queries as q
 from dash import dcc, html
+from flask import request
 from log_helper import setup_logging
-from flask import Flask, request
 
 setup_logging()
 logging.info('Starting the app')
 
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
+
+# The server is needed when running in a docker image
+server = app.server
+
 app._favicon = "assets/favicon.ico"
 app.title = "CAS - Loan Performance"
 
@@ -78,4 +82,4 @@ app.layout = html.Div([
 ])
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
