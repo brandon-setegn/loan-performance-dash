@@ -1,19 +1,31 @@
+import logging
+
 import dash
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
-from dash import dcc
-from dash import html
 import queries as q
+from dash import dcc, html
+from log_helper import setup_logging
+from flask import Flask, request
+
+setup_logging()
+logging.info('Starting the app')
+
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 app._favicon = "assets/favicon.ico"
 app.title = "CAS - Loan Performance"
 
+# Log every request for troubleshooting
+@app.server.before_request
+def log_request_info():
+    logging.debug('Request: %s', extra={'host': request.host, 'path': request.path})
+
 dq60 = q.get_dq60()
 cpr = q.get_cpr()
 
-
 app.layout = html.Div([
+    html.H1(children='Fannie Mae CAS - Loan Performance', style={'textAlign':'center'}),
     html.Div([
         dcc.Graph(
             id='dq-line-chart',
@@ -34,7 +46,11 @@ app.layout = html.Div([
                 )
             }
         )
-    ], style={'width': '50%', 'display': 'inline-block'}),
+    ], style={
+        'width': 'calc(50% - 20px)',
+        'display': 'inline-block',
+        'margin': '10px'
+        }),
     html.Div([
         dcc.Graph(
             id='cpr-line-chart',
@@ -54,7 +70,11 @@ app.layout = html.Div([
                 )
             }
         )
-    ], style={'width': '50%', 'display': 'inline-block'})
+    ], style={
+        'width': 'calc(50% - 20px)',
+        'display': 'inline-block',
+        'margin': '10px'
+        })
 ])
 
 if __name__ == '__main__':

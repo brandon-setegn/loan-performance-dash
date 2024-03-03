@@ -1,6 +1,9 @@
 from google.cloud import bigquery
 import pandas as pd
 
+from log_helper import log_execution_time
+
+@log_execution_time
 def get_dq60():
     client = bigquery.Client()
     sql = """
@@ -17,6 +20,7 @@ def get_dq60():
     )
     return df
 
+@log_execution_time
 def get_cpr():
     client = bigquery.Client()
     sql = """
