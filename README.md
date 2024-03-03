@@ -35,10 +35,18 @@ This project is a loan performance dashboard built using Poetry, Plotly Dash, an
 
 3. Open your web browser and navigate to `http://localhost:8050` to access the loan performance dashboard.
 
-## Contributing
 
-Contributions are welcome! Please follow the guidelines in [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+## Docker Image
+The included Dockerfile will build an image that can be used to run the application.
+1. Export Poetry to requirements.txt
+```shell
+poetry export --without-hashes -f requirements.txt -o requirements.txt
+```
+2. Build Docker image with tag
+```shell
+docker build -t loan-performance-dash .
+```
+3. Run Locally - this requires setting Google credentials to be able to connect to BigQuery
+```shell
+docker run -e GOOGLE_CLOUD_PROJECT={gcp-project-id} -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/application_default_credentials.json -v {path-to-local-application_default_credentials.json}:/tmp/keys/application_default_credentials.json -p 8000:8000 loan-performance-dash
+```
