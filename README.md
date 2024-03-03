@@ -50,3 +50,14 @@ docker build -t loan-performance-dash .
 ```shell
 docker run -e GOOGLE_CLOUD_PROJECT={gcp-project-id} -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/application_default_credentials.json -v {path-to-local-application_default_credentials.json}:/tmp/keys/application_default_credentials.json -p 8000:8000 loan-performance-dash
 ```
+
+## Running in Cloud Run
+1. Tag with GCR format
+```shell
+docker tag loan-performance-dash us-east1-docker.pkg.dev/{your-project-id}/loan-performance/loan-performance-dash
+```
+2. Docker Push
+```shell
+docker push us-east1-docker.pkg.dev/{your-project-id}/loan-performance/loan-performance-dash
+```
+3. Follow the Steps in the GCP Console to complete the Cloud Run Setup.  Make sure to pick port 8000.
