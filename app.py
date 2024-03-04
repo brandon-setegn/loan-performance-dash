@@ -25,8 +25,7 @@ app.title = "CAS - Loan Performance"
 def log_request_info():
     logging.debug('Request: %s', extra={'host': request.host, 'path': request.path})
 
-dq60 = q.get_dq60()
-cpr = q.get_cpr()
+perf = q.get_performance()
 
 app.layout = html.Div([
     html.H1(children='Fannie Mae CAS - Loan Performance', style={'textAlign':'center'}),
@@ -36,15 +35,15 @@ app.layout = html.Div([
             figure={
                 'data': [
                     go.Scatter(
-                        x=cpr[cpr['deal_name'] == deal]['reporting_period'],
-                        y=cpr[cpr['deal_name'] == deal]['cpr'],
+                        x=perf[perf['deal_name'] == deal]['reporting_period'],
+                        y=perf[perf['deal_name'] == deal]['cpr'],
                         mode='lines',
                         name=deal
                     )
-                    for deal in cpr['deal_name'].unique()
+                    for deal in perf['deal_name'].unique()
                 ],
                 'layout': go.Layout(
-                    title='CPR over time',
+                    title='CPR',
                     xaxis={'title': 'Reporting Period'},
                     yaxis={'title': 'CPR'},
                 )
@@ -57,21 +56,71 @@ app.layout = html.Div([
         }),
     html.Div([
         dcc.Graph(
-            id='dq-line-chart',
+            id='cnt-line-chart',
             figure={
                 'data': [
                     go.Scatter(
-                        x=dq60[dq60['deal_name'] == deal]['reporting_period'],
-                        y=dq60[dq60['deal_name'] == deal]['dlq60pct'],
+                        x=perf[perf['deal_name'] == deal]['reporting_period'],
+                        y=perf[perf['deal_name'] == deal]['current_actual_upb'],
                         mode='lines',
                         name=deal
                     )
-                    for deal in dq60['deal_name'].unique()
+                    for deal in perf[(perf['deal_name'] != 'all_deals')]['deal_name'].unique()
                 ],
                 'layout': go.Layout(
-                    title='DLQ 60% over time',
+                    title='Current UPB',
                     xaxis={'title': 'Reporting Period'},
-                    yaxis={'title': 'DLQ 60%'},
+                    yaxis={'title': 'UPB'},
+                )
+            }
+        )
+    ], style={
+        'width': 'calc(50% - 20px)',
+        'display': 'inline-block',
+        'margin': '10px'
+        }),
+    html.Div([
+        dcc.Graph(
+            id='dq60-line-chart',
+            figure={
+                'data': [
+                    go.Scatter(
+                        x=perf[perf['deal_name'] == deal]['reporting_period'],
+                        y=perf[perf['deal_name'] == deal]['dlq60pct'],
+                        mode='lines',
+                        name=deal
+                    )
+                    for deal in perf['deal_name'].unique()
+                ],
+                'layout': go.Layout(
+                    title='DLQ 60+ % by Count',
+                    xaxis={'title': 'Reporting Period'},
+                    yaxis={'title': 'DLQ 60+ %', 'ticksuffix': '%'},
+                )
+            }
+        )
+    ], style={
+        'width': 'calc(50% - 20px)',
+        'display': 'inline-block',
+        'margin': '10px'
+        }),
+    html.Div([
+        dcc.Graph(
+            id='dq90-line-chart',
+            figure={
+                'data': [
+                    go.Scatter(
+                        x=perf[perf['deal_name'] == deal]['reporting_period'],
+                        y=perf[perf['deal_name'] == deal]['dlq90pct'],
+                        mode='lines',
+                        name=deal
+                    )
+                    for deal in perf['deal_name'].unique()
+                ],
+                'layout': go.Layout(
+                    title='DLQ 90% by Count',
+                    xaxis={'title': 'Reporting Period'},
+                    yaxis={'title': 'DLQ 90+ %', 'ticksuffix': '%'},
                 )
             }
         )
@@ -83,4 +132,4 @@ app.layout = html.Div([
 ])
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)

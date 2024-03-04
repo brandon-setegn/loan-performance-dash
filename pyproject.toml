@@ -13,6 +13,7 @@ dash-bootstrap-components = "^1.5.0"
 google-cloud-bigquery = "^3.17.2"
 python-json-logger = "^2.0.7"
 gunicorn = "^21.2.0"
+db-dtypes = "^1.2.0"
 
 
 [build-system]
