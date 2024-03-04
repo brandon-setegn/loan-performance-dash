@@ -32,21 +32,21 @@ app.layout = html.Div([
     html.H1(children='Fannie Mae CAS - Loan Performance', style={'textAlign':'center'}),
     html.Div([
         dcc.Graph(
-            id='dq-line-chart',
+            id='cpr-line-chart',
             figure={
                 'data': [
                     go.Scatter(
-                        x=dq60['reporting_period'],
-                        y=dq60['dlq60pct'],
+                        x=cpr[cpr['deal_name'] == deal]['reporting_period'],
+                        y=cpr[cpr['deal_name'] == deal]['cpr'],
                         mode='lines',
-                        name='DLQ 60%',
-                        line=dict(color='darkred')
+                        name=deal
                     )
+                    for deal in cpr['deal_name'].unique()
                 ],
                 'layout': go.Layout(
-                    title='DLQ 60% over time',
+                    title='CPR over time',
                     xaxis={'title': 'Reporting Period'},
-                    yaxis={'title': 'DLQ 60%'},
+                    yaxis={'title': 'CPR'},
                 )
             }
         )
@@ -57,20 +57,21 @@ app.layout = html.Div([
         }),
     html.Div([
         dcc.Graph(
-            id='cpr-line-chart',
+            id='dq-line-chart',
             figure={
                 'data': [
                     go.Scatter(
-                        x=cpr['reporting_period'],
-                        y=cpr['cpr'],
+                        x=dq60[dq60['deal_name'] == deal]['reporting_period'],
+                        y=dq60[dq60['deal_name'] == deal]['dlq60pct'],
                         mode='lines',
-                        name='CPR'
+                        name=deal
                     )
+                    for deal in dq60['deal_name'].unique()
                 ],
                 'layout': go.Layout(
-                    title='CPR over time',
+                    title='DLQ 60% over time',
                     xaxis={'title': 'Reporting Period'},
-                    yaxis={'title': 'CPR'},
+                    yaxis={'title': 'DLQ 60%'},
                 )
             }
         )

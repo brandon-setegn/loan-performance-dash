@@ -22,6 +22,9 @@ def log_execution_time(func):
         end_time = time.time()
         elapsed_time = end_time - start_time
         milliseconds = int(elapsed_time * 1000)
-        logging.info(f"{func.__name__} took {format(milliseconds, ',')} milliseconds to execute", extra={'elapsed_time': milliseconds})
+        logging.info(
+            f"{func.__name__} took {format(milliseconds, ',')} milliseconds to execute",
+            extra={'elapsed_time': milliseconds, 'function_name': func.__name__}
+            )
         return result
     return wrapper
